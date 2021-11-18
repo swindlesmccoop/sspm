@@ -1,0 +1,84 @@
+#!/bin/bash
+
+function newpass {
+echo "What site?"
+read SITE
+echo [$SITE] >> ~/.passwords
+PASSLENGTH=$(python -S -c "import random; print random.randrange(15,30)")
+PASS=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c $PASSLENGTH)
+echo $PASS >> ~/.passwords
+echo "" >> ~/.passwords
+echo $PASS
+}
+
+function append {
+    echo "What site?"
+    read APPEND_SITE
+    echo [$APPEND_SITE] >> ~/.passwords
+    echo "What is the password?"
+    read APPEND_PASS
+    echo $APPEND_PASS >> ~/.passwords
+    echo "" >> ~/.passwords
+}
+
+function delete {
+    echo "What site?"
+    read REMOVEPASS
+    sed "/$REMOVEPASS/,+2 d" ~/.passwords >> ~/.passwords
+    echo "Password for $REMOVEPASS removed!"
+}
+
+function replace {
+    echo "What site?"
+    read REPLACESITE
+    sed "/$REPLACESITE/,+2 d" ~/.passwords >> ~/.passwords
+    echo [$REPLACESITE] >> ~/.passwords
+    echo "New password?"
+    read NEWPASS
+    echo $NEWPASS >> ~/.passwords
+    echo "" >> ~/.passwords
+}
+
+function sspm_help {
+echo "Shell Script Password Manager (sspm) by Layne Cooper
+
+Usage:
+
+sspm [site]: Prints password for [site]
+a, -a, --append: (A)ppend new, custom password
+d, -d, --delete: (D)elete a password
+h, -h, --help: Display this (h)elp message
+n, -n, --new: Generate (n)ew password
+r, -r, --replace: (R)eplace a password with a custom one
+"
+}
+
+function line {
+    echo "----------------------------------------------------"
+}
+
+if [ $# -eq 0 ]; then #if no parameters supplied, print the help message
+    line    
+    sspm_help
+    exit 1
+fi
+
+case "$1" in
+    a) append ;;
+    -a) append ;;
+    --append) append ;;
+    --add) append ;;
+    n) newpass ;;
+    -n) newpass ;;
+    --new) newpass ;;
+    h) line && sspm_help ;;
+    -h) line && sspm_help ;;
+    --help) line && sspm_help ;;
+    d) delete ;;
+    -d) delete ;;
+    --delete) delete ;;
+    r) replace ;;
+    -r) replace ;;
+    --replace) replace ;;
+    *) sed -n "/$1/{n;p}" ~/.passwords
+esac
