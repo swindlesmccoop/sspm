@@ -5,18 +5,18 @@
 function newpass {
     PASSLENGTH=$(shuf -i 15-30 -n 1)
     PASS=$(tr -dc 'A-Za-z0-9!"#$&'\''()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c "$PASSLENGTH")
-    printf "[$2]\n$PASS\n\n" >> ~/.passwords
+    printf "[$2]\n$PASS\n\n" >> $HOME/.passwords
     echo "$PASS"
 }
 
 function append {
     echo "What is the password?"
     read -r APPEND_PASS
-    printf "[$2]\n$APPEND_PASS\n\n" >> ~/.passwords && echo "Password for $2 appended!"
+    printf "[$2]\n$APPEND_PASS\n\n" >> $HOME/.passwords && echo "Password for $2 appended!"
 }
 
 function delete {
-    sed "/$2/,+2 d" ~/.passwords >> ~/.passwords && echo "Password for $2 removed!"
+    sed "/$2/,+2 d" ~/.passwords >> $HOME/.passwords && echo "Password for $2 removed!"
 }
 
 function replace {
